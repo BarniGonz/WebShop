@@ -1,0 +1,2940 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>B4N1 SHOP - Premium Electronics Store</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* CSS Variables */
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --success-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --warning-gradient: linear-gradient(135deg, #fdbb2d 0%, #22c1c3 100%);
+            --error-gradient: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
+            --text-primary: #2d3748;
+            --text-secondary: #718096;
+            --light-bg: #f7fafc;
+            --border-color: #e2e8f0;
+            --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+
+        /* Global Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-primary);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* Loading Spinner */
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        .loading-spinner.dark {
+            border: 2px solid rgba(0,0,0,0.1);
+            border-top-color: #667eea;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Products Loading */
+        .products-loading {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 4rem 0;
+            color: var(--text-secondary);
+        }
+
+        .products-loading .loading-spinner {
+            width: 40px;
+            height: 40px;
+            margin-bottom: 1rem;
+        }
+
+        /* Toast System */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 10001;
+            max-width: 400px;
+        }
+
+        .toast {
+            background: white;
+            border-radius: 12px;
+            box-shadow: var(--shadow-xl);
+            margin-bottom: 1rem;
+            overflow: hidden;
+            transform: translateX(100%);
+            animation: slideInToast 0.3s ease forwards;
+            border-left: 4px solid;
+        }
+
+        .toast.success { border-left-color: #10b981; }
+        .toast.error { border-left-color: #ef4444; }
+        .toast.warning { border-left-color: #f59e0b; }
+        .toast.info { border-left-color: #3b82f6; }
+
+        .toast-header {
+            display: flex;
+            align-items: center;
+            padding: 1rem 1rem 0.5rem;
+            gap: 0.75rem;
+        }
+
+        .toast-icon {
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .toast.success .toast-icon { color: #10b981; }
+        .toast.error .toast-icon { color: #ef4444; }
+        .toast.warning .toast-icon { color: #f59e0b; }
+        .toast.info .toast-icon { color: #3b82f6; }
+
+        .toast-title {
+            font-weight: 600;
+            font-size: 0.9rem;
+            flex: 1;
+        }
+
+        .toast-close {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0.25rem;
+            border-radius: 4px;
+            color: var(--text-secondary);
+            transition: all 0.2s ease;
+        }
+
+        .toast-close:hover {
+            background: var(--light-bg);
+            color: var(--text-primary);
+        }
+
+        .toast-message {
+            padding: 0 1rem 1rem;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.4;
+        }
+
+        @keyframes slideInToast {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes slideOutToast {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(100%); opacity: 0; }
+        }
+
+        /* Domain Error Alert */
+        .domain-error {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
+            color: white;
+            padding: 1rem;
+            text-align: center;
+            z-index: 10002;
+            font-weight: 600;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .domain-error.hidden {
+            display: none;
+        }
+
+        .domain-error-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+
+        .domain-error-text {
+            flex: 1;
+            font-size: 0.9rem;
+        }
+
+        .domain-error-close {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            padding: 0.5rem;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .domain-error-close:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        /* Login Gate */
+        .login-gate {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: all 0.5s ease;
+        }
+
+        .login-gate.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .login-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 3rem;
+            width: 100%;
+            max-width: 450px;
+            box-shadow: var(--shadow-2xl);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            animation: slideInModal 0.5s ease;
+        }
+
+        @keyframes slideInModal {
+            from { transform: scale(0.9) translateY(-20px); opacity: 0; }
+            to { transform: scale(1) translateY(0); opacity: 1; }
+        }
+
+        .login-logo {
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: 900;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+            animation: rainbow 3s ease-in-out infinite;
+        }
+
+        @keyframes rainbow {
+            0%, 100% { 
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                -webkit-background-clip: text;
+                background-clip: text;
+            }
+            25% { 
+                background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+                -webkit-background-clip: text;
+                background-clip: text;
+            }
+            50% { 
+                background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+                -webkit-background-clip: text;
+                background-clip: text;
+            }
+            75% { 
+                background: linear-gradient(135deg, #fdbb2d 0%, #22c1c3 100%);
+                -webkit-background-clip: text;
+                background-clip: text;
+            }
+        }
+
+        .login-title {
+            text-align: center;
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .login-subtitle {
+            text-align: center;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            font-size: 0.95rem;
+        }
+
+        .auth-tabs {
+            display: flex;
+            background: var(--light-bg);
+            border-radius: 12px;
+            padding: 0.25rem;
+            margin-bottom: 2rem;
+        }
+
+        .auth-tab {
+            flex: 1;
+            padding: 0.75rem;
+            border: none;
+            background: transparent;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        .auth-tab.active {
+            background: white;
+            color: var(--text-primary);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .auth-form {
+            display: none;
+        }
+
+        .auth-form.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            font-size: 0.9rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-input.error {
+            border-color: #ef4444;
+            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+        }
+
+        .form-error {
+            color: #ef4444;
+            font-size: 0.8rem;
+            margin-top: 0.25rem;
+            display: none;
+        }
+
+        .form-error.show {
+            display: block;
+        }
+
+        .auth-button {
+            width: 100%;
+            padding: 1rem;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+        }
+
+        .auth-button.primary {
+            background: var(--primary-gradient);
+            color: white;
+        }
+
+        .auth-button.primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .auth-button.google {
+            background: white;
+            color: var(--text-primary);
+            border: 2px solid var(--border-color);
+        }
+
+        .auth-button.google:hover:not(:disabled) {
+            background: var(--light-bg);
+            border-color: #4285f4;
+        }
+
+        .auth-button.demo {
+            background: var(--warning-gradient);
+            color: white;
+            margin-top: 1rem;
+        }
+
+        .auth-button.demo:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .auth-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .forgot-password {
+            display: block;
+            text-align: center;
+            color: #667eea;
+            text-decoration: none;
+            font-size: 0.9rem;
+            margin-top: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .forgot-password:hover {
+            color: #764ba2;
+            text-decoration: underline;
+        }
+
+        /* Header */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            box-shadow: var(--shadow-lg);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem 0;
+        }
+
+        .logo {
+            font-size: 1.75rem;
+            font-weight: 900;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            animation: rainbow 3s ease-in-out infinite;
+        }
+
+        .logo:hover {
+            transform: scale(1.05);
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-primary);
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            color: #667eea;
+            transform: translateY(-2px);
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary-gradient);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .header-btn {
+            background: var(--light-bg);
+            border: 2px solid var(--border-color);
+            border-radius: 50%;
+            width: 44px;
+            height: 44px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-primary);
+        }
+
+        .header-btn:hover {
+            background: var(--primary-gradient);
+            color: white;
+            border-color: transparent;
+            transform: scale(1.05);
+        }
+
+        .cart-icon {
+            position: relative;
+        }
+
+        .cart-count {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: var(--error-gradient);
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            animation: bounce 0.6s ease;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 53%, 80%, 100% { transform: translate3d(0,0,0); }
+            40%, 43% { transform: translate3d(0, -30px, 0); }
+            70% { transform: translate3d(0, -15px, 0); }
+            90% { transform: translate3d(0, -4px, 0); }
+        }
+
+        .user-profile {
+            position: relative;
+            display: none;
+        }
+
+        .user-profile.active {
+            display: block;
+        }
+
+        .profile-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid var(--border-color);
+            transition: all 0.3s ease;
+            object-fit: cover;
+        }
+
+        .profile-avatar:hover {
+            border-color: #667eea;
+            transform: scale(1.05);
+        }
+
+        .profile-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            border-radius: 12px;
+            box-shadow: var(--shadow-xl);
+            border: 1px solid var(--border-color);
+            min-width: 250px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            z-index: 1001;
+            margin-top: 10px;
+        }
+
+        .profile-dropdown.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .profile-info {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .profile-name {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .profile-email {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .profile-menu {
+            list-style: none;
+            padding: 0.5rem 0;
+        }
+
+        .profile-menu li a {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1.5rem;
+            color: var(--text-primary);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .profile-menu li a:hover {
+            background: var(--light-bg);
+            color: #667eea;
+        }
+
+        .logout-btn {
+            color: #ef4444 !important;
+        }
+
+        .logout-btn:hover {
+            background: rgba(239, 68, 68, 0.1) !important;
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-primary);
+        }
+
+        /* Main Content */
+        main {
+            margin-top: 80px;
+            padding: 2rem 0;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 4rem 0;
+            color: white;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            font-weight: 900;
+            margin-bottom: 1rem;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        .cta-button {
+            background: white;
+            color: var(--text-primary);
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-xl);
+        }
+
+        /* Category Filter */
+        .category-filter {
+            background: white;
+            padding: 2rem 0;
+            margin: 2rem 0;
+            border-radius: 24px;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .filter-title {
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: var(--text-primary);
+        }
+
+        .filter-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 0.75rem 1.5rem;
+            border: 2px solid var(--border-color);
+            background: white;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            color: var(--text-primary);
+            text-transform: capitalize;
+        }
+
+        .filter-btn:hover,
+        .filter-btn.active {
+            background: var(--primary-gradient);
+            color: white;
+            border-color: transparent;
+            transform: translateY(-2px);
+        }
+
+        /* Products Section */
+        .products-section {
+            background: white;
+            padding: 4rem 0;
+            margin: 2rem 0;
+            border-radius: 24px;
+            box-shadow: var(--shadow-xl);
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .section-subtitle {
+            text-align: center;
+            color: var(--text-secondary);
+            margin-bottom: 3rem;
+            font-size: 1.1rem;
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+            transition: all 0.3s ease;
+            border: 1px solid var(--border-color);
+            position: relative;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .product-image {
+            width: 100%;
+            height: 250px;
+            background: var(--light-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            padding: 1rem;
+            transition: transform 0.3s ease;
+        }
+
+        .product-card:hover .product-image img {
+            transform: scale(1.05);
+        }
+
+        .product-badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: var(--success-gradient);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .product-info {
+            padding: 1.5rem;
+        }
+
+        .product-category {
+            color: #667eea;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.5rem;
+        }
+
+        .product-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            color: var(--text-primary);
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .product-description {
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .product-rating {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .stars {
+            display: flex;
+            gap: 0.1rem;
+        }
+
+        .star {
+            color: #fbbf24;
+            font-size: 0.9rem;
+        }
+
+        .star.empty {
+            color: #e5e7eb;
+        }
+
+        .rating-text {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .product-price {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .original-price {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            text-decoration: line-through;
+            font-weight: 400;
+        }
+
+        .discount {
+            background: var(--error-gradient);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .product-actions {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .add-to-cart {
+            flex: 1;
+            background: var(--primary-gradient);
+            color: white;
+            border: none;
+            padding: 0.875rem;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .add-to-cart:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .add-to-cart:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .wishlist-btn {
+            background: var(--light-bg);
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            width: 44px;
+            height: 44px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+        }
+
+        .wishlist-btn:hover {
+            background: var(--secondary-gradient);
+            color: white;
+            border-color: transparent;
+        }
+
+        .wishlist-btn.active {
+            background: var(--secondary-gradient);
+            color: white;
+            border-color: transparent;
+        }
+
+        /* Cart Modal */
+        .cart-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            backdrop-filter: blur(5px);
+        }
+
+        .cart-modal.active {
+            display: flex;
+        }
+
+        .cart-content {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow-2xl);
+        }
+
+        .cart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .cart-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .cart-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-secondary);
+            padding: 0.5rem;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .cart-close:hover {
+            background: var(--light-bg);
+            color: var(--text-primary);
+        }
+
+        .cart-items {
+            margin-bottom: 2rem;
+        }
+
+        .cart-item {
+            display: flex;
+            gap: 1rem;
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .cart-item:last-child {
+            border-bottom: none;
+        }
+
+        .cart-item-image {
+            width: 80px;
+            height: 80px;
+            background: var(--light-bg);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .cart-item-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .cart-item-info {
+            flex: 1;
+        }
+
+        .cart-item-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .cart-item-price {
+            color: #667eea;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .cart-item-controls {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .quantity-btn {
+            background: var(--light-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            width: 32px;
+            height: 32px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .quantity-btn:hover {
+            background: var(--primary-gradient);
+            color: white;
+            border-color: transparent;
+        }
+
+        .quantity {
+            font-weight: 600;
+            min-width: 30px;
+            text-align: center;
+        }
+
+        .remove-item {
+            background: none;
+            border: none;
+            color: #ef4444;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+
+        .remove-item:hover {
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        .cart-summary {
+            border-top: 1px solid var(--border-color);
+            padding-top: 1rem;
+        }
+
+        .cart-total {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .checkout-btn {
+            width: 100%;
+            background: var(--success-gradient);
+            color: white;
+            border: none;
+            padding: 1rem;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .checkout-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .empty-cart {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-secondary);
+        }
+
+        .empty-cart i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .login-container {
+                margin: 1rem;
+                padding: 2rem;
+            }
+
+            .products-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .container {
+                padding: 0 1rem;
+            }
+
+            .filter-buttons {
+                gap: 0.5rem;
+            }
+
+            .filter-btn {
+                padding: 0.5rem 1rem;
+                font-size: 0.9rem;
+            }
+
+            .cart-content {
+                padding: 1.5rem;
+                width: 95%;
+            }
+
+            .cart-item {
+                flex-direction: column;
+                gap: 0.75rem;
+            }
+
+            .cart-item-image {
+                width: 60px;
+                height: 60px;
+            }
+
+            .domain-error-content {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Domain Error Alert -->
+    <div class="domain-error hidden" id="domainError">
+        <div class="domain-error-content">
+            <div class="domain-error-text">
+                <i class="fas fa-exclamation-triangle"></i>
+                Firebase domain not authorized. Add 'barnigonz.github.io' to Firebase authorized domains in your project settings.
+            </div>
+            <button class="domain-error-close" onclick="closeDomainError()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Login Gate -->
+    <div class="login-gate" id="loginGate">
+        <div class="login-container">
+            <div class="login-logo">B4N1</div>
+            <h2 class="login-title">Welcome Back!</h2>
+            <p class="login-subtitle">Please sign in to access our premium electronics store</p>
+            
+            <div class="auth-tabs">
+                <button class="auth-tab active" onclick="switchTab('login')">Sign In</button>
+                <button class="auth-tab" onclick="switchTab('register')">Sign Up</button>
+            </div>
+
+            <!-- Login Form -->
+            <form class="auth-form active" id="loginForm">
+                <div class="form-group">
+                    <label class="form-label">Email Address</label>
+                    <input type="email" class="form-input" id="loginEmail" placeholder="Enter your email" required>
+                    <div class="form-error" id="loginEmailError"></div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Password</label>
+                    <input type="password" class="form-input" id="loginPassword" placeholder="Enter your password" required>
+                    <div class="form-error" id="loginPasswordError"></div>
+                </div>
+                <button type="submit" class="auth-button primary" id="loginBtn">
+                    <i class="fas fa-sign-in-alt"></i>
+                                        Sign In
+                </button>
+                <button type="button" class="auth-button google" id="googleSignInBtn">
+                    <i class="fab fa-google"></i>
+                    Continue with Google
+                </button>
+                <button type="button" class="auth-button demo" id="demoLoginBtn">
+                    <i class="fas fa-rocket"></i>
+                    Demo Login (Skip Firebase)
+                </button>
+                <a href="#" class="forgot-password" onclick="resetPassword()">Forgot your password?</a>
+            </form>
+
+            <!-- Register Form -->
+            <form class="auth-form" id="registerForm">
+                <div class="form-group">
+                    <label class="form-label">Full Name</label>
+                    <input type="text" class="form-input" id="registerName" placeholder="Enter your full name" required>
+                    <div class="form-error" id="registerNameError"></div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Email Address</label>
+                    <input type="email" class="form-input" id="registerEmail" placeholder="Enter your email" required>
+                    <div class="form-error" id="registerEmailError"></div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Password</label>
+                    <input type="password" class="form-input" id="registerPassword" placeholder="Create a password" required>
+                    <div class="form-error" id="registerPasswordError"></div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Confirm Password</label>
+                    <input type="password" class="form-input" id="confirmPassword" placeholder="Confirm your password" required>
+                    <div class="form-error" id="confirmPasswordError"></div>
+                </div>
+                <button type="submit" class="auth-button primary" id="registerBtn">
+                    <i class="fas fa-user-plus"></i>
+                    Create Account
+                </button>
+                <button type="button" class="auth-button google" id="googleSignUpBtn">
+                    <i class="fab fa-google"></i>
+                    Sign up with Google
+                </button>
+                <button type="button" class="auth-button demo" id="demoRegisterBtn">
+                    <i class="fas fa-rocket"></i>
+                    Demo Account (Skip Firebase)
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header>
+        <nav class="container">
+            <div class="logo" onclick="goHome()">B4N1 SHOP</div>
+            
+            <ul class="nav-links">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#products">Products</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+
+            <div class="header-actions">
+                <button class="header-btn" onclick="toggleSearch()">
+                    <i class="fas fa-search"></i>
+                </button>
+                
+                <button class="header-btn cart-icon" onclick="toggleCart()">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span class="cart-count" id="cartCount">0</span>
+                </button>
+
+                <div class="user-profile" id="userProfile">
+                    <img src="https://via.placeholder.com/44x44/667eea/ffffff?text=U" alt="Profile" class="profile-avatar" id="profileAvatar" onclick="toggleProfileDropdown()">
+                    <div class="profile-dropdown" id="profileDropdown">
+                        <div class="profile-info">
+                            <div class="profile-name" id="profileName">Demo User</div>
+                            <div class="profile-email" id="profileEmail">demo@b4nishop.com</div>
+                        </div>
+                        <ul class="profile-menu">
+                            <li><a href="#profile"><i class="fas fa-user"></i> My Profile</a></li>
+                            <li><a href="#orders"><i class="fas fa-box"></i> My Orders</a></li>
+                            <li><a href="#wishlist"><i class="fas fa-heart"></i> Wishlist</a></li>
+                            <li><a href="#settings"><i class="fas fa-cog"></i> Settings</a></li>
+                            <li><a href="#" class="logout-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Cart Modal -->
+    <div class="cart-modal" id="cartModal">
+        <div class="cart-content">
+            <div class="cart-header">
+                <h2 class="cart-title">Shopping Cart</h2>
+                <button class="cart-close" onclick="toggleCart()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="cart-items" id="cartItems">
+                <!-- Cart items will be loaded here -->
+            </div>
+            <div class="cart-summary" id="cartSummary">
+                <div class="cart-total">
+                    <span>Total: </span>
+                    <span id="cartTotal">$0.00</span>
+                </div>
+                <button class="checkout-btn" onclick="checkout()">
+                    <i class="fas fa-credit-card"></i>
+                    Proceed to Checkout
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main>
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="container">
+                <h1>Premium Electronics Store</h1>
+                <p>Discover the latest technology and gadgets at unbeatable prices</p>
+                <a href="#products" class="cta-button">Shop Now</a>
+            </div>
+        </section>
+
+        <!-- Category Filter -->
+        <section class="category-filter" id="categoryFilter">
+            <div class="container">
+                <h2 class="filter-title">Shop by Category</h2>
+                <div class="filter-buttons" id="filterButtons">
+                    <button class="filter-btn active" onclick="filterProducts('all')">All Products</button>
+                    <!-- Category buttons will be loaded here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Products Section -->
+        <section class="products-section" id="products">
+            <div class="container">
+                <h2 class="section-title">Featured Products</h2>
+                <p class="section-subtitle">Discover our handpicked selection of premium electronics</p>
+                <div class="products-grid" id="productsGrid">
+                    <!-- Products will be loaded here -->
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Firebase Configuration -->
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-analytics.js";
+        import { 
+            getAuth, 
+            createUserWithEmailAndPassword, 
+            signInWithEmailAndPassword,
+            signInWithPopup,
+            GoogleAuthProvider,
+            signOut,
+            onAuthStateChanged,
+            updateProfile,
+            sendPasswordResetEmail
+        } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-auth.js";
+
+        // Your Firebase configuration for barnigonz.github.io/WebShop/
+        const firebaseConfig = {
+            apiKey: "AIzaSyC3kgwar9LhAX2wxa8moxQOPqAd_KYqnzo",
+            authDomain: "login-35433.firebaseapp.com",
+            projectId: "login-35433",
+            storageBucket: "login-35433.firebasestorage.app",
+            messagingSenderId: "587773809497",
+            appId: "1:587773809497:web:edcc69ce9f03b81d11f248",
+            measurementId: "G-L9P453GYBS"
+        };
+
+        // Initialize Firebase
+        let app, analytics, auth, googleProvider;
+        
+        try {
+            app = initializeApp(firebaseConfig);
+            analytics = getAnalytics(app);
+            auth = getAuth(app);
+            googleProvider = new GoogleAuthProvider();
+            
+            // Configure Google provider with additional scopes
+            googleProvider.addScope('email');
+            googleProvider.addScope('profile');
+            googleProvider.setCustomParameters({
+                'prompt': 'select_account'
+            });
+            
+            console.log('🔥 Firebase initialized successfully for barnigonz.github.io');
+            window.firebaseInitialized = true;
+        } catch (error) {
+            console.error('❌ Firebase initialization error:', error);
+            window.firebaseError = error;
+            window.firebaseInitialized = false;
+            
+            // Show domain error if it's a domain issue
+            if (error.code === 'auth/unauthorized-domain' || 
+                error.message.includes('domain') || 
+                error.message.includes('authorized')) {
+                setTimeout(() => showDomainError(), 1000);
+            }
+        }
+
+        // Make Firebase functions available globally
+        window.firebaseAuth = {
+            auth,
+            createUserWithEmailAndPassword,
+            signInWithEmailAndPassword,
+            signInWithPopup,
+            GoogleAuthProvider,
+            googleProvider,
+            signOut,
+            onAuthStateChanged,
+            updateProfile,
+            sendPasswordResetEmail
+        };
+
+        // Enhanced auth state listener with comprehensive error handling
+        if (auth) {
+            onAuthStateChanged(auth, (user) => {
+                if (user) {
+                    console.log('✅ User signed in:', user);
+                    handleUserLogin(user);
+                } else {
+                    console.log('👋 User signed out');
+                    handleUserLogout();
+                }
+            }, (error) => {
+                console.error('❌ Auth state change error:', error);
+                
+                // Handle specific Firebase errors
+                if (error.code === 'auth/unauthorized-domain') {
+                    showDomainError();
+                } else if (error.code === 'auth/network-request-failed') {
+                    showToast('error', 'Network Error', 'Please check your internet connection');
+                } else {
+                    showToast('error', 'Authentication Error', 'An error occurred with authentication');
+                }
+            });
+        } else {
+            console.error('❌ Firebase Auth not initialized');
+            window.firebaseError = new Error('Firebase Auth not initialized');
+        }
+    </script>
+
+    <script>
+        // Global Variables
+        let isLoggedIn = false;
+        let currentUser = null;
+        let cart = [];
+        let wishlist = [];
+        let products = [];
+        let categories = [];
+        let currentCategory = 'all';
+        let isDemoMode = false;
+
+        // API Configuration
+        const API_BASE_URL = 'https://fakestoreapi.com';
+
+        // GitHub Pages specific domain handling
+        const GITHUB_PAGES_DOMAIN = 'barnigonz.github.io';
+        const CURRENT_DOMAIN = window.location.hostname;
+
+        // Domain management
+        function getCurrentDomain() {
+            return CURRENT_DOMAIN;
+        }
+
+        function isGitHubPages() {
+            return CURRENT_DOMAIN.includes('github.io') || CURRENT_DOMAIN.includes('githubusercontent.com');
+        }
+
+        // Enhanced Domain Error Handling for GitHub Pages
+        function showDomainError() {
+            const domainError = document.getElementById('domainError');
+            domainError.classList.remove('hidden');
+            
+            // Adjust main content margin
+            document.querySelector('main').style.marginTop = '140px';
+            
+            // Show comprehensive domain error message
+            showToast('error', 'Firebase Domain Not Authorized', 
+                `Add '${GITHUB_PAGES_DOMAIN}' to Firebase Authentication > Settings > Authorized domains`);
+            
+            // Log detailed information for developers
+            console.group('🔥 Firebase Domain Authorization Required for GitHub Pages');
+            console.log('Current Domain:', CURRENT_DOMAIN);
+            console.log('GitHub Pages Domain:', GITHUB_PAGES_DOMAIN);
+            console.log('Firebase Auth Domain:', 'login-35433.firebaseapp.com');
+            console.log('Required Action: Add the GitHub Pages domain to Firebase Console');
+            console.log('Steps:');
+            console.log('1. Go to https://console.firebase.google.com/');
+            console.log('2. Select your project (login-35433)');
+            console.log('3. Go to Authentication > Settings');
+            console.log('4. Scroll to "Authorized domains"');
+            console.log('5. Click "Add domain"');
+            console.log(`6. Add: ${GITHUB_PAGES_DOMAIN}`);
+            console.log('7. Save changes and refresh this page');
+            console.groupEnd();
+        }
+
+        function closeDomainError() {
+            const domainError = document.getElementById('domainError');
+            domainError.classList.add('hidden');
+            
+            // Reset main content margin
+            document.querySelector('main').style.marginTop = '80px';
+        }
+
+        // Utility Functions
+        function showToast(type, title, message) {
+            const toastContainer = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            
+            const icons = {
+                success: 'fas fa-check-circle',
+                error: 'fas fa-exclamation-circle',
+                warning: 'fas fa-exclamation-triangle',
+                info: 'fas fa-info-circle'
+            };
+
+            toast.innerHTML = `
+                <div class="toast-header">
+                    <div class="toast-icon">
+                        <i class="${icons[type]}"></i>
+                    </div>
+                    <div class="toast-title">${title}</div>
+                    <button class="toast-close" onclick="closeToast(this)">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="toast-message">${message}</div>
+            `;
+
+            toastContainer.appendChild(toast);
+
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                if (toast.parentNode) {
+                    removeToast(toast);
+                }
+            }, 5000);
+        }
+
+        function closeToast(button) {
+            const toast = button.closest('.toast');
+            removeToast(toast);
+        }
+
+        function removeToast(toast) {
+            toast.style.animation = 'slideOutToast 0.3s ease forwards';
+            setTimeout(() => {
+                if (toast.parentNode) {
+                    toast.parentNode.removeChild(toast);
+                }
+            }, 300);
+        }
+
+        function showFormError(inputId, message) {
+            const input = document.getElementById(inputId);
+            const errorDiv = document.getElementById(inputId + 'Error');
+            
+            input.classList.add('error');
+            errorDiv.textContent = message;
+            errorDiv.classList.add('show');
+        }
+
+        function clearFormError(inputId) {
+            const input = document.getElementById(inputId);
+            const errorDiv = document.getElementById(inputId + 'Error');
+            
+            input.classList.remove('error');
+            errorDiv.textContent = '';
+            errorDiv.classList.remove('show');
+        }
+
+        function clearAllFormErrors() {
+            const errorInputs = ['loginEmail', 'loginPassword', 'registerName', 'registerEmail', 'registerPassword', 'confirmPassword'];
+            errorInputs.forEach(inputId => clearFormError(inputId));
+        }
+
+        function setButtonLoading(buttonId, isLoading, loadingText, normalText) {
+            const button = document.getElementById(buttonId);
+            if (isLoading) {
+                button.disabled = true;
+                button.innerHTML = `<div class="loading-spinner"></div> ${loadingText}`;
+            } else {
+                button.disabled = false;
+                button.innerHTML = normalText;
+            }
+        }
+
+        function formatPrice(price) {
+            return new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD'
+            }).format(price);
+        }
+
+        function generateStars(rating) {
+            const fullStars = Math.floor(rating);
+            const hasHalfStar = rating % 1 !== 0;
+            const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+            
+            let starsHTML = '';
+            
+            // Full stars
+            for (let i = 0; i < fullStars; i++) {
+                starsHTML += '<i class="fas fa-star star"></i>';
+            }
+            
+            // Half star
+            if (hasHalfStar) {
+                starsHTML += '<i class="fas fa-star-half-alt star"></i>';
+            }
+            
+            // Empty stars
+            for (let i = 0; i < emptyStars; i++) {
+                starsHTML += '<i class="far fa-star star empty"></i>';
+            }
+            
+            return starsHTML;
+        }
+
+        function truncateText(text, maxLength) {
+            if (text.length <= maxLength) return text;
+            return text.substr(0, maxLength) + '...';
+        }
+
+        // API Functions
+        async function fetchProducts() {
+            try {
+                showProductsLoading();
+                const response = await fetch(`${API_BASE_URL}/products`);
+                if (!response.ok) throw new Error('Failed to fetch products');
+                
+                const data = await response.json();
+                products = data.map(product => ({
+                    ...product,
+                    originalPrice: product.price * 1.2, // Simulate original price for discount
+                    discount: Math.floor(Math.random() * 30) + 10, // Random discount 10-40%
+                    inStock: Math.random() > 0.1, // 90% chance of being in stock
+                    isNew: Math.random() > 0.7 // 30% chance of being new
+                }));
+                
+                await fetchCategories();
+                renderProducts();
+                renderCategoryFilter();
+                
+            } catch (error) {
+                console.error('Error fetching products:', error);
+                showToast('error', 'Error', 'Failed to load products. Please try again later.');
+                showProductsError();
+            }
+        }
+
+        async function fetchCategories() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/products/categories`);
+                if (!response.ok) throw new Error('Failed to fetch categories');
+                
+                categories = await response.json();
+            } catch (error) {
+                console.error('Error fetching categories:', error);
+                categories = [];
+            }
+        }
+
+        function showProductsLoading() {
+            const productsGrid = document.getElementById('productsGrid');
+            productsGrid.innerHTML = `
+                <div class="products-loading">
+                    <div class="loading-spinner dark"></div>
+                    <p>Loading amazing products...</p>
+                </div>
+            `;
+        }
+
+        function showProductsError() {
+            const productsGrid = document.getElementById('productsGrid');
+            productsGrid.innerHTML = `
+                <div class="products-loading">
+                    <i class="fas fa-exclamation-triangle" style="font-size: 3rem; color: #ef4444; margin-bottom: 1rem;"></i>
+                    <p>Failed to load products</p>
+                    <button onclick="fetchProducts()" style="margin-top: 1rem; padding: 0.5rem 1rem; background: var(--primary-gradient); color: white; border: none; border-radius: 8px; cursor: pointer;">
+                        Try Again
+                    </button>
+                </div>
+            `;
+        }
+
+        // Demo Mode Functions
+        function enableDemoMode(userData = null) {
+            isDemoMode = true;
+            isLoggedIn = true;
+            
+            currentUser = userData || {
+                uid: 'demo-user-' + Date.now(),
+                email: 'demo@b4nishop.com',
+                displayName: 'Demo User',
+                photoURL: null
+            };
+            
+            // Update UI
+            document.getElementById('loginGate').classList.add('hidden');
+            document.getElementById('userProfile').classList.add('active');
+            document.getElementById('profileName').textContent = currentUser.displayName;
+            document.getElementById('profileEmail').textContent = currentUser.email;
+            
+            // Load demo data
+            loadDemoData();
+            
+            showToast('success', 'Demo Mode Activated!', 'You\'re now using B4N1 SHOP in demo mode. All features are available!');
+            
+            // Load products if not already loaded
+            if (products.length === 0) {
+                fetchProducts();
+            }
+        }
+
+        function loadDemoData() {
+            // Load demo cart and wishlist from localStorage
+            try {
+                const demoData = localStorage.getItem('demoUserData');
+                if (demoData) {
+                    const data = JSON.parse(demoData);
+                    cart = data.cart || [];
+                    wishlist = data.wishlist || [];
+                    updateCartCount();
+                }
+            } catch (error) {
+                console.error('Error loading demo data:', error);
+                cart = [];
+                wishlist = [];
+            }
+        }
+
+        function saveDemoData() {
+            if (!isDemoMode) return;
+            
+            const demoData = {
+                cart: cart,
+                wishlist: wishlist,
+                lastUpdated: new Date().toISOString()
+            };
+            
+            try {
+                localStorage.setItem('demoUserData', JSON.stringify(demoData));
+            } catch (error) {
+                console.error('Error saving demo data:', error);
+            }
+        }
+
+        // Authentication Functions with Enhanced Error Handling
+        function switchTab(tab) {
+            const tabs = document.querySelectorAll('.auth-tab');
+            const forms = document.querySelectorAll('.auth-form');
+            
+            tabs.forEach(t => t.classList.remove('active'));
+            forms.forEach(f => f.classList.remove('active'));
+            
+            document.querySelector(`[onclick="switchTab('${tab}')"]`).classList.add('active');
+            document.getElementById(tab === 'login' ? 'loginForm' : 'registerForm').classList.add('active');
+            
+            clearAllFormErrors();
+        }
+
+        async function handleUserLogin(user) {
+            isLoggedIn = true;
+            currentUser = user;
+            isDemoMode = false;
+            
+            // Load user data from localStorage
+            loadUserData();
+            
+            // Update UI
+            document.getElementById('loginGate').classList.add('hidden');
+            document.getElementById('userProfile').classList.add('active');
+            document.getElementById('profileName').textContent = user.displayName || user.email.split('@')[0];
+            document.getElementById('profileEmail').textContent = user.email;
+            
+            // Set profile avatar if available
+            if (user.photoURL) {
+                document.getElementById('profileAvatar').src = user.photoURL;
+            }
+            
+            showToast('success', 'Welcome!', `Successfully signed in as ${user.displayName || user.email}`);
+            
+            // Load products if not already loaded
+            if (products.length === 0) {
+                await fetchProducts();
+            }
+        }
+
+        function handleUserLogout() {
+            isLoggedIn = false;
+            currentUser = null;
+            cart = [];
+            wishlist = [];
+            isDemoMode = false;
+            
+            // Clear user data from localStorage
+            clearUserData();
+            
+            // Update UI
+            document.getElementById('loginGate').classList.remove('hidden');
+            document.getElementById('userProfile').classList.remove('active');
+            document.getElementById('profileDropdown').classList.remove('active');
+            document.getElementById('cartModal').classList.remove('active');
+            
+            // Reset profile avatar
+            document.getElementById('profileAvatar').src = 'https://via.placeholder.com/44x44/667eea/ffffff?text=U';
+            
+            updateCartCount();
+        }
+
+        // Enhanced Firebase error handling
+        function getDetailedErrorMessage(error) {
+            const errorMessages = {
+                'auth/unauthorized-domain': {
+                    title: 'Domain Not Authorized',
+                    message: `Domain '${getCurrentDomain()}' is not authorized. Please add it to Firebase Authentication settings.`,
+                    action: 'domain_error'
+                },
+                'auth/user-not-found': {
+                    title: 'Account Not Found',
+                    message: 'No account found with this email address. Please check your email or create a new account.',
+                    field: 'loginEmail'
+                },
+                'auth/wrong-password': {
+                    title: 'Incorrect Password',
+                    message: 'The password you entered is incorrect. Please try again or reset your password.',
+                    field: 'loginPassword'
+                },
+                'auth/invalid-email': {
+                    title: 'Invalid Email',
+                    message: 'Please enter a valid email address.',
+                    field: 'loginEmail'
+                },
+                'auth/email-already-in-use': {
+                    title: 'Email Already Registered',
+                    message: 'An account with this email already exists. Please sign in instead.',
+                    field: 'registerEmail'
+                },
+                'auth/weak-password': {
+                    title: 'Weak Password',
+                    message: 'Password should be at least 6 characters long.',
+                    field: 'registerPassword'
+                },
+                'auth/too-many-requests': {
+                    title: 'Too Many Attempts',
+                    message: 'Too many failed attempts. Please wait a few minutes before trying again.'
+                },
+                'auth/network-request-failed': {
+                    title: 'Network Error',
+                    message: 'Please check your internet connection and try again.'
+                },
+                'auth/popup-closed-by-user': {
+                    title: 'Sign In Cancelled',
+                    message: 'Google sign in was cancelled. Please try again.'
+                },
+                'auth/popup-blocked': {
+                    title: 'Popup Blocked',
+                    message: 'Please allow popups for this site and try again.'
+                },
+                'auth/account-exists-with-different-credential': {
+                    title: 'Account Exists',
+                    message: 'An account already exists with this email. Please sign in with email and password.'
+                }
+            };
+
+            return errorMessages[error.code] || {
+                title: 'Authentication Error',
+                message: error.message || 'An unexpected error occurred. Please try again.'
+            };
+        }
+
+        async function loginWithEmail(email, password) {
+            // Check if Firebase is available
+            if (!window.firebaseInitialized || !window.firebaseAuth) {
+                showToast('error', 'Firebase Error', 'Firebase authentication is not available. Try demo mode instead.');
+                return;
+            }
+
+            try {
+                setButtonLoading('loginBtn', true, 'Signing In...', '<i class="fas fa-sign-in-alt"></i> Sign In');
+                
+                const userCredential = await window.firebaseAuth.signInWithEmailAndPassword(
+                    window.firebaseAuth.auth, 
+                    email, 
+                    password
+                );
+                
+                // Success handled by onAuthStateChanged
+                
+            } catch (error) {
+                console.error('Login error:', error);
+                
+                const errorInfo = getDetailedErrorMessage(error);
+                
+                // Handle specific error actions
+                if (errorInfo.action === 'domain_error') {
+                    showDomainError();
+                }
+                
+                if (errorInfo.field) {
+                    showFormError(errorInfo.field, errorInfo.message);
+                }
+                
+                showToast('error', errorInfo.title, errorInfo.message);
+            } finally {
+                setButtonLoading('loginBtn', false, '', '<i class="fas fa-sign-in-alt"></i> Sign In');
+            }
+        }
+
+        async function registerWithEmail(name, email, password) {
+            // Check if Firebase is available
+            if (!window.firebaseInitialized || !window.firebaseAuth) {
+                showToast('error', 'Firebase Error', 'Firebase authentication is not available. Try demo mode instead.');
+                return;
+            }
+
+            try {
+                setButtonLoading('registerBtn', true, 'Creating Account...', '<i class="fas fa-user-plus"></i> Create Account');
+                
+                const userCredential = await window.firebaseAuth.createUserWithEmailAndPassword(
+                    window.firebaseAuth.auth, 
+                    email, 
+                    password
+                );
+                
+                // Update user profile with display name
+                await window.firebaseAuth.updateProfile(userCredential.user, {
+                    displayName: name
+                });
+                
+                // Success handled by onAuthStateChanged
+                
+            } catch (error) {
+                console.error('Registration error:', error);
+                
+                const errorInfo = getDetailedErrorMessage(error);
+                
+                // Handle specific error actions
+                if (errorInfo.action === 'domain_error') {
+                    showDomainError();
+                }
+                
+                if (errorInfo.field) {
+                    showFormError(errorInfo.field, errorInfo.message);
+                }
+                
+                showToast('error', errorInfo.title, errorInfo.message);
+            } finally {
+                setButtonLoading('registerBtn', false, '', '<i class="fas fa-user-plus"></i> Create Account');
+            }
+        }
+
+        async function signInWithGoogle() {
+            // Check if Firebase is available
+            if (!window.firebaseInitialized || !window.firebaseAuth) {
+                showToast('error', 'Firebase Error', 'Firebase authentication is not available. Try demo mode instead.');
+                return;
+            }
+
+            try {
+                const buttons = ['googleSignInBtn', 'googleSignUpBtn'];
+                buttons.forEach(btnId => {
+                    const button = document.getElementById(btnId);
+                    if (button) {
+                        setButtonLoading(btnId, true, 'Connecting...', '<i class="fab fa-google"></i> Continue with Google');
+                    }
+                });
+                
+                const result = await window.firebaseAuth.signInWithPopup(
+                    window.firebaseAuth.auth, 
+                    window.firebaseAuth.googleProvider
+                );
+                
+                // Success handled by onAuthStateChanged
+                console.log('Google sign in successful:', result.user);
+                
+            } catch (error) {
+                console.error('Google sign in error:', error);
+                
+                const errorInfo = getDetailedErrorMessage(error);
+                
+                // Handle specific error actions
+                if (errorInfo.action === 'domain_error') {
+                    showDomainError();
+                }
+                
+                showToast('error', errorInfo.title, errorInfo.message);
+            } finally {
+                const buttons = ['googleSignInBtn', 'googleSignUpBtn'];
+                buttons.forEach(btnId => {
+                    const button = document.getElementById(btnId);
+                    if (button) {
+                        setButtonLoading(btnId, false, '', '<i class="fab fa-google"></i> Continue with Google');
+                    }
+                });
+            }
+        }
+
+        async function logout() {
+            try {
+                if (isDemoMode) {
+                    // Demo mode logout
+                    handleUserLogout();
+                    showToast('info', 'Demo Session Ended', 'You have been signed out of demo mode');
+                } else if (window.firebaseAuth && window.firebaseAuth.auth) {
+                    await window.firebaseAuth.signOut(window.firebaseAuth.auth);
+                    showToast('info', 'Signed Out', 'You have been successfully signed out');
+                } else {
+                    // Fallback logout
+                    handleUserLogout();
+                    showToast('info', 'Signed Out', 'You have been signed out');
+                }
+            } catch (error) {
+                console.error('Logout error:', error);
+                showToast('error', 'Logout Failed', 'An error occurred during sign out');
+            }
+        }
+
+        async function resetPassword() {
+            const email = document.getElementById('loginEmail').value;
+            
+            if (!email) {
+                showToast('warning', 'Email Required', 'Please enter your email address first');
+                showFormError('loginEmail', 'Email required for password reset');
+                return;
+            }
+            
+            // Check if Firebase is available
+            if (!window.firebaseInitialized || !window.firebaseAuth) {
+                showToast('error', 'Firebase Error', 'Firebase authentication is not available. Password reset requires Firebase.');
+                return;
+            }
+            
+            try {
+                await window.firebaseAuth.sendPasswordResetEmail(window.firebaseAuth.auth, email);
+                showToast('success', 'Reset Email Sent', 'Check your email for password reset instructions');
+            } catch (error) {
+                console.error('Password reset error:', error);
+                
+                const errorInfo = getDetailedErrorMessage(error);
+                
+                if (errorInfo.action === 'domain_error') {
+                    showDomainError();
+                }
+                
+                showToast('error', errorInfo.title, errorInfo.message);
+            }
+        }
+
+        // Local Storage Functions
+        function saveUserData() {
+            if (!currentUser) return;
+            
+            const userData = {
+                cart: cart,
+                wishlist: wishlist,
+                lastUpdated: new Date().toISOString()
+            };
+            
+            try {
+                const storageKey = isDemoMode ? 'demoUserData' : `userData_${currentUser.uid}`;
+                localStorage.setItem(storageKey, JSON.stringify(userData));
+            } catch (error) {
+                console.error('Error saving user data:', error);
+            }
+        }
+
+        function loadUserData() {
+            if (!currentUser) return;
+            
+            try {
+                const storageKey = isDemoMode ? 'demoUserData' : `userData_${currentUser.uid}`;
+                const userData = localStorage.getItem(storageKey);
+                if (userData) {
+                    const data = JSON.parse(userData);
+                    cart = data.cart || [];
+                    wishlist = data.wishlist || [];
+                    updateCartCount();
+                }
+            } catch (error) {
+                console.error('Error loading user data:', error);
+                cart = [];
+                wishlist = [];
+            }
+        }
+
+        function clearUserData() {
+            if (!currentUser) return;
+            try {
+                const storageKey = isDemoMode ? 'demoUserData' : `userData_${currentUser.uid}`;
+                localStorage.removeItem(storageKey);
+            } catch (error) {
+                console.error('Error clearing user data:', error);
+            }
+        }
+
+        // Product Functions
+        function renderProducts() {
+            const productsGrid = document.getElementById('productsGrid');
+            
+            let filteredProducts = products;
+            if (currentCategory !== 'all') {
+                filteredProducts = products.filter(product => product.category === currentCategory);
+            }
+            
+            if (filteredProducts.length === 0) {
+                productsGrid.innerHTML = `
+                    <div class="products-loading">
+                        <i class="fas fa-search" style="font-size: 3rem; color: var(--text-secondary); margin-bottom: 1rem; opacity: 0.5;"></i>
+                        <p>No products found in this category</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            productsGrid.innerHTML = '';
+            
+            filteredProducts.forEach(product => {
+                const isInWishlist = wishlist.some(item => item.id === product.id);
+                const discountedPrice = product.price;
+                const originalPrice = product.originalPrice;
+                const discountPercent = Math.round(((originalPrice - discountedPrice) / originalPrice) * 100);
+                
+                const productCard = document.createElement('div');
+                productCard.className = 'product-card';
+                productCard.innerHTML = `
+                    ${product.isNew ? '<div class="product-badge">New</div>' : ''}
+                    <div class="product-image">
+                        <img src="${product.image}" alt="${product.title}" loading="lazy">
+                    </div>
+                    <div class="product-info">
+                        <div class="product-category">${product.category}</div>
+                        <h3 class="product-title">${truncateText(product.title, 60)}</h3>
+                        <p class="product-description">${truncateText(product.description, 120)}</p>
+                        <div class="product-rating">
+                            <div class="stars">
+                                ${generateStars(product.rating.rate)}
+                            </div>
+                            <span class="rating-text">(${product.rating.count} reviews)</span>
+                        </div>
+                        <div class="product-price">
+                            ${formatPrice(discountedPrice)}
+                            <span class="original-price">${formatPrice(originalPrice)}</span>
+                            <span class="discount">-${discountPercent}%</span>
+                        </div>
+                        <div class="product-actions">
+                            <button class="add-to-cart" onclick="addToCart(${product.id}
+                            )" ${!product.inStock ? 'disabled' : ''}>
+                                <i class="fas fa-shopping-cart"></i>
+                                ${product.inStock ? 'Add to Cart' : 'Out of Stock'}
+                            </button>
+                            <button class="wishlist-btn ${isInWishlist ? 'active' : ''}" onclick="toggleWishlist(${product.id})">
+                                <i class="fas fa-heart"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+                productsGrid.appendChild(productCard);
+            });
+        }
+
+        function renderCategoryFilter() {
+            const filterButtons = document.getElementById('filterButtons');
+            
+            // Clear existing buttons except "All Products"
+            filterButtons.innerHTML = '<button class="filter-btn active" onclick="filterProducts(\'all\')">All Products</button>';
+            
+            categories.forEach(category => {
+                const button = document.createElement('button');
+                button.className = 'filter-btn';
+                button.textContent = category.charAt(0).toUpperCase() + category.slice(1);
+                button.onclick = () => filterProducts(category);
+                filterButtons.appendChild(button);
+            });
+        }
+
+        function filterProducts(category) {
+            currentCategory = category;
+            
+            // Update active filter button
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            renderProducts();
+            
+            // Smooth scroll to products
+            document.getElementById('products').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Cart Functions
+        function addToCart(productId) {
+            if (!isLoggedIn) {
+                showToast('warning', 'Please Sign In', 'You need to sign in to add items to cart');
+                return;
+            }
+            
+            const product = products.find(p => p.id === productId);
+            if (!product) return;
+            
+            if (!product.inStock) {
+                showToast('error', 'Out of Stock', 'This product is currently out of stock');
+                return;
+            }
+            
+            const existingItem = cart.find(item => item.id === productId);
+            
+            if (existingItem) {
+                existingItem.quantity += 1;
+                showToast('success', 'Updated Cart', `Increased quantity of ${truncateText(product.title, 30)}`);
+            } else {
+                cart.push({ 
+                    ...product, 
+                    quantity: 1,
+                    addedAt: new Date().toISOString()
+                });
+                showToast('success', 'Added to Cart', `${truncateText(product.title, 30)} has been added to your cart`);
+            }
+            
+            updateCartCount();
+            saveUserData();
+        }
+
+        function removeFromCart(productId) {
+            const itemIndex = cart.findIndex(item => item.id === productId);
+            if (itemIndex > -1) {
+                const item = cart[itemIndex];
+                cart.splice(itemIndex, 1);
+                showToast('info', 'Removed from Cart', `${truncateText(item.title, 30)} has been removed from your cart`);
+                updateCartCount();
+                renderCartItems();
+                saveUserData();
+            }
+        }
+
+        function updateCartQuantity(productId, change) {
+            const item = cart.find(item => item.id === productId);
+            if (!item) return;
+            
+            item.quantity += change;
+            
+            if (item.quantity <= 0) {
+                removeFromCart(productId);
+                return;
+            }
+            
+            updateCartCount();
+            renderCartItems();
+            saveUserData();
+        }
+
+        function updateCartCount() {
+            const cartCount = document.getElementById('cartCount');
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            
+            if (totalItems > 0) {
+                cartCount.textContent = totalItems;
+                cartCount.style.display = 'flex';
+            } else {
+                cartCount.style.display = 'none';
+            }
+        }
+
+        function toggleCart() {
+            if (!isLoggedIn) {
+                showToast('warning', 'Please Sign In', 'You need to sign in to view your cart');
+                return;
+            }
+            
+            const cartModal = document.getElementById('cartModal');
+            cartModal.classList.toggle('active');
+            
+            if (cartModal.classList.contains('active')) {
+                renderCartItems();
+                document.body.style.overflow = 'hidden';
+            } else {
+                document.body.style.overflow = 'auto';
+            }
+        }
+
+        function renderCartItems() {
+            const cartItems = document.getElementById('cartItems');
+            const cartSummary = document.getElementById('cartSummary');
+            
+            if (cart.length === 0) {
+                cartItems.innerHTML = `
+                    <div class="empty-cart">
+                        <i class="fas fa-shopping-cart"></i>
+                        <h3>Your cart is empty</h3>
+                        <p>Add some products to get started!</p>
+                    </div>
+                `;
+                cartSummary.style.display = 'none';
+                return;
+            }
+            
+            cartSummary.style.display = 'block';
+            
+            cartItems.innerHTML = '';
+            let total = 0;
+            
+            cart.forEach(item => {
+                const itemTotal = item.price * item.quantity;
+                total += itemTotal;
+                
+                const cartItem = document.createElement('div');
+                cartItem.className = 'cart-item';
+                cartItem.innerHTML = `
+                    <div class="cart-item-image">
+                        <img src="${item.image}" alt="${item.title}">
+                    </div>
+                    <div class="cart-item-info">
+                        <div class="cart-item-title">${truncateText(item.title, 50)}</div>
+                        <div class="cart-item-price">${formatPrice(item.price)} each</div>
+                        <div class="cart-item-controls">
+                            <button class="quantity-btn" onclick="updateCartQuantity(${item.id}, -1)">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                            <span class="quantity">${item.quantity}</span>
+                            <button class="quantity-btn" onclick="updateCartQuantity(${item.id}, 1)">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                            <button class="remove-item" onclick="removeFromCart(${item.id})">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+                cartItems.appendChild(cartItem);
+            });
+            
+            document.getElementById('cartTotal').textContent = formatPrice(total);
+        }
+
+        function checkout() {
+            if (cart.length === 0) {
+                showToast('warning', 'Empty Cart', 'Your cart is empty');
+                return;
+            }
+            
+            const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const itemCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+            
+            // Simulate checkout process
+            showToast('info', 'Processing...', 'Redirecting to checkout...');
+            
+            setTimeout(() => {
+                // Clear cart after successful checkout
+                cart = [];
+                updateCartCount();
+                renderCartItems();
+                saveUserData();
+                toggleCart();
+                
+                showToast('success', 'Order Placed!', `Successfully ordered ${itemCount} items for ${formatPrice(total)}`);
+            }, 2000);
+        }
+
+        // Wishlist Functions
+        function toggleWishlist(productId) {
+            if (!isLoggedIn) {
+                showToast('warning', 'Please Sign In', 'You need to sign in to add items to wishlist');
+                return;
+            }
+            
+            const product = products.find(p => p.id === productId);
+            if (!product) return;
+            
+            const existingIndex = wishlist.findIndex(item => item.id === productId);
+            
+            if (existingIndex > -1) {
+                wishlist.splice(existingIndex, 1);
+                showToast('info', 'Removed from Wishlist', `${truncateText(product.title, 30)} has been removed from your wishlist`);
+            } else {
+                wishlist.push({
+                    ...product,
+                    addedAt: new Date().toISOString()
+                });
+                showToast('success', 'Added to Wishlist', `${truncateText(product.title, 30)} has been added to your wishlist`);
+            }
+            
+            // Update wishlist button
+            const wishlistBtn = event.target.closest('.wishlist-btn');
+            wishlistBtn.classList.toggle('active');
+            
+            saveUserData();
+        }
+
+        // Form Event Listeners
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            clearAllFormErrors();
+            
+            const email = document.getElementById('loginEmail').value.trim();
+            const password = document.getElementById('loginPassword').value;
+            
+            // Enhanced validation
+            let hasError = false;
+            
+            if (!email) {
+                showFormError('loginEmail', 'Email is required');
+                hasError = true;
+            } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                showFormError('loginEmail', 'Please enter a valid email address');
+                hasError = true;
+            }
+            
+            if (!password) {
+                showFormError('loginPassword', 'Password is required');
+                hasError = true;
+            }
+            
+            if (hasError) return;
+            
+            loginWithEmail(email, password);
+        });
+
+        document.getElementById('registerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            clearAllFormErrors();
+            
+            const name = document.getElementById('registerName').value.trim();
+            const email = document.getElementById('registerEmail').value.trim();
+            const password = document.getElementById('registerPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            
+            // Enhanced validation
+            let hasError = false;
+            
+            if (!name) {
+                showFormError('registerName', 'Full name is required');
+                hasError = true;
+            } else if (name.length < 2) {
+                showFormError('registerName', 'Name must be at least 2 characters');
+                hasError = true;
+            }
+            
+            if (!email) {
+                showFormError('registerEmail', 'Email is required');
+                hasError = true;
+            } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                showFormError('registerEmail', 'Please enter a valid email address');
+                hasError = true;
+            }
+            
+            if (!password) {
+                showFormError('registerPassword', 'Password is required');
+                hasError = true;
+            } else if (password.length < 6) {
+                showFormError('registerPassword', 'Password must be at least 6 characters');
+                hasError = true;
+            } else if (!/(?=.*[a-z])(?=.*[A-Z])/.test(password)) {
+                showFormError('registerPassword', 'Password should contain both uppercase and lowercase letters');
+                hasError = true;
+            }
+            
+            if (!confirmPassword) {
+                showFormError('confirmPassword', 'Please confirm your password');
+                hasError = true;
+            } else if (password !== confirmPassword) {
+                showFormError('confirmPassword', 'Passwords do not match');
+                hasError = true;
+            }
+            
+            if (hasError) return;
+            
+            registerWithEmail(name, email, password);
+        });
+
+        // Enhanced Google Sign In Button Event Listeners
+        document.getElementById('googleSignInBtn').addEventListener('click', (e) => {
+            e.preventDefault();
+            signInWithGoogle();
+        });
+
+        document.getElementById('googleSignUpBtn').addEventListener('click', (e) => {
+            e.preventDefault();
+            signInWithGoogle();
+        });
+
+        // Demo Mode Button Event Listeners
+        document.getElementById('demoLoginBtn').addEventListener('click', (e) => {
+            e.preventDefault();
+            enableDemoMode();
+        });
+
+        document.getElementById('demoRegisterBtn').addEventListener('click', (e) => {
+            e.preventDefault();
+            const name = document.getElementById('registerName').value.trim() || 'Demo User';
+            const email = document.getElementById('registerEmail').value.trim() || 'demo@b4nishop.com';
+            
+            enableDemoMode({
+                uid: 'demo-user-' + Date.now(),
+                email: email,
+                displayName: name,
+                photoURL: null
+            });
+        });
+
+        // Enhanced form input validation
+        ['loginEmail', 'loginPassword', 'registerName', 'registerEmail', 'registerPassword', 'confirmPassword'].forEach(inputId => {
+            const input = document.getElementById(inputId);
+            
+            input.addEventListener('input', function() {
+                clearFormError(inputId);
+            });
+            
+            input.addEventListener('blur', function() {
+                // Real-time validation on blur
+                const value = this.value.trim();
+                
+                if (inputId === 'loginEmail' || inputId === 'registerEmail') {
+                    if (value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+                        showFormError(inputId, 'Please enter a valid email address');
+                    }
+                }
+                
+                if (inputId === 'registerPassword') {
+                    if (value && value.length < 6) {
+                        showFormError(inputId, 'Password must be at least 6 characters');
+                    }
+                }
+                
+                if (inputId === 'confirmPassword') {
+                    const password = document.getElementById('registerPassword').value;
+                    if (value && value !== password) {
+                        showFormError(inputId, 'Passwords do not match');
+                    }
+                }
+            });
+        });
+
+        // Profile Dropdown
+        function toggleProfileDropdown() {
+            const dropdown = document.getElementById('profileDropdown');
+            dropdown.classList.toggle('active');
+        }
+
+        // Enhanced click outside handlers
+        document.addEventListener('click', function(event) {
+            const profile = document.getElementById('userProfile');
+            const dropdown = document.getElementById('profileDropdown');
+            const cartModal = document.getElementById('cartModal');
+            
+            // Close profile dropdown when clicking outside
+            if (!profile.contains(event.target)) {
+                dropdown.classList.remove('active');
+            }
+            
+            // Close cart modal when clicking on backdrop
+            if (event.target === cartModal) {
+                toggleCart();
+            }
+        });
+
+        // Navigation Functions
+        function goHome() {
+            document.querySelector('.hero').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function toggleSearch() {
+            showToast('info', 'Search Coming Soon', 'Advanced search functionality will be available soon!');
+        }
+
+        function toggleMobileMenu() {
+            showToast('info', 'Mobile Menu', 'Mobile navigation menu would be implemented here');
+        }
+
+        // Enhanced smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href').substring(1);
+                const target = document.getElementById(targetId);
+                
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                } else if (targetId === 'home') {
+                    goHome();
+                }
+            });
+        });
+
+        // Enhanced header scroll effect
+        let lastScrollY = window.scrollY;
+        
+        window.addEventListener('scroll', function() {
+            const header = document.querySelector('header');
+            const currentScrollY = window.scrollY;
+            
+            // Change header background based on scroll position
+            if (currentScrollY > 100) {
+                header.style.background = 'rgba(255, 255, 255, 0.98)';
+                header.style.backdropFilter = 'blur(20px)';
+                header.style.boxShadow = 'var(--shadow-lg)';
+            } else {
+                header.style.background = 'rgba(255, 255, 255, 0.95)';
+                header.style.backdropFilter = 'blur(20px)';
+                header.style.boxShadow = 'var(--shadow-md)';
+            }
+            
+            // Hide/show header on scroll
+            if (currentScrollY > lastScrollY && currentScrollY > 200) {
+                header.style.transform = 'translateY(-100%)';
+            } else {
+                header.style.transform = 'translateY(0)';
+            }
+            
+            lastScrollY = currentScrollY;
+        });
+
+        // Enhanced keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            // ESC to close modals/dropdowns
+            if (e.key === 'Escape') {
+                document.getElementById('profileDropdown').classList.remove('active');
+                if (document.getElementById('cartModal').classList.contains('active')) {
+                    toggleCart();
+                }
+                closeDomainError();
+            }
+            
+            // Ctrl+K for search
+            if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                e.preventDefault();
+                toggleSearch();
+            }
+            
+            // Alt+C for cart
+            if (e.altKey && e.key === 'c') {
+                e.preventDefault();
+                if (isLoggedIn) {
+                    toggleCart();
+                }
+            }
+        });
+
+        // Demo features for profile menu
+        function showDemoFeature(feature) {
+            const messages = {
+                profile: 'User profile management with photo upload, personal information, and preferences would be available here.',
+                orders: 'Complete order history with tracking information, delivery status, and reorder options would be displayed here.',
+                wishlist: `You have ${wishlist.length} items in your wishlist. Full wishlist management would be implemented here.`,
+                settings: 'Account settings including notifications, privacy, payment methods, and shipping addresses would be configured here.'
+            };
+            
+            showToast('info', 'Feature Preview', messages[feature] || 'This feature would be fully implemented in a production environment');
+        }
+
+        // Enhanced profile menu click handlers
+        document.addEventListener('click', function(e) {
+            const link = e.target.closest('a[href^="#"]');
+            if (link && isLoggedIn) {
+                const href = link.getAttribute('href');
+                if (href === '#profile') {
+                    e.preventDefault();
+                    showDemoFeature('profile');
+                } else if (href === '#orders') {
+                    e.preventDefault();
+                    showDemoFeature('orders');
+                } else if (href === '#wishlist') {
+                    e.preventDefault();
+                    showDemoFeature('wishlist');
+                } else if (href === '#settings') {
+                    e.preventDefault();
+                    showDemoFeature('settings');
+                }
+            }
+        });
+
+        // GitHub Pages specific initialization
+        function initializeGitHubPages() {
+            console.log('🚀 B4N1 SHOP initialized for GitHub Pages');
+            console.log('📍 Domain:', CURRENT_DOMAIN);
+            console.log('🔗 Full URL:', window.location.href);
+            
+            // Check if we're on the correct GitHub Pages domain
+            if (isGitHubPages()) {
+                console.log('✅ Running on GitHub Pages');
+                
+                // Show GitHub Pages specific welcome message
+                setTimeout(() => {
+                    if (!isLoggedIn) {
+                        showToast('info', 'Welcome to B4N1 SHOP on GitHub Pages!', 
+                            'Try demo mode for instant access or configure Firebase for full authentication');
+                    }
+                }, 2000);
+                
+                // Check Firebase domain authorization
+                setTimeout(() => {
+                    if (window.firebaseError && window.firebaseError.code === 'auth/unauthorized-domain') {
+                        showDomainError();
+                    }
+                }, 3000);
+            }
+        }
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 B4N1 SHOP initialized');
+            
+            // Initialize GitHub Pages specific features
+            initializeGitHubPages();
+            
+            // Load products initially
+            fetchProducts();
+            
+            // Firebase initialization check
+            setTimeout(() => {
+                if (window.firebaseError) {
+                    console.warn('⚠️ Firebase initialization failed:', window.firebaseError);
+                    
+                    if (window.firebaseError.code === 'auth/unauthorized-domain' || 
+                        window.firebaseError.message.includes('domain')) {
+                        showToast('warning', 'Firebase Domain Issue', 
+                            'Firebase authentication requires domain authorization. Use demo mode for now!');
+                    } else {
+                        showToast('info', 'Demo Mode Available', 
+                            'Firebase is not available. Use demo mode to explore all features!');
+                    }
+                } else if (window.firebaseInitialized) {
+                    console.log('✅ Firebase successfully initialized');
+                    showToast('success', 'Firebase Ready', 'Full authentication features are available!');
+                }
+            }, 3000);
+
+            // Show initial welcome message
+            setTimeout(() => {
+                if (!isLoggedIn) {
+                    showToast('info', 'Welcome to B4N1 SHOP', 
+                        'Sign in with Firebase or try demo mode to start shopping for premium electronics');
+                }
+            }, 1000);
+        });
+
+        // Performance optimization: Intersection Observer for animations
+        if ('IntersectionObserver' in window) {
+            const animationObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            // Observe product cards for animation
+            setTimeout(() => {
+                document.querySelectorAll('.product-card').forEach(card => {
+                    card.style.opacity = '0';
+                    card.style.transform = 'translateY(20px)';
+                    card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+                    animationObserver.observe(card);
+                });
+            }, 100);
+        }
+
+        // Service Worker registration for PWA features
+        if ('serviceWorker' in navigator && window.location.protocol === 'https:') {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('/WebShop/sw.js')
+                    .then(function(registration) {
+                        console.log('✅ ServiceWorker registered successfully');
+                    })
+                    .catch(function(err) {
+                        console.log('⚠️ ServiceWorker registration failed:', err);
+                    });
+            });
+        }
+
+        // Error boundary for unhandled errors
+        window.addEventListener('error', function(event) {
+            console.error('❌ Unhandled error:', event.error);
+            showToast('error', 'Application Error', 'An unexpected error occurred. Please refresh the page if problems persist.');
+        });
+
+        // Enhanced promise rejection handler
+        window.addEventListener('unhandledrejection', function(event) {
+            console.error('❌ Unhandled promise rejection:', event.reason);
+            
+            // Handle Firebase-specific errors
+            if (event.reason && event.reason.code) {
+                if (event.reason.code.startsWith('auth/')) {
+                    const errorInfo = getDetailedErrorMessage(event.reason);
+                    
+                    if (errorInfo.action === 'domain_error') {
+                        showDomainError();
+                    } else {
+                        showToast('error', errorInfo.title, errorInfo.message);
+                    }
+                    
+                    event.preventDefault(); // Prevent the default unhandled rejection behavior
+                }
+            }
+        });
+
+        // App state management
+        const AppState = {
+            isInitialized: false,
+            lastActivity: Date.now(),
+            
+            updateActivity() {
+                this.lastActivity = Date.now();
+            },
+            
+            checkActivity() {
+                const inactive = Date.now() - this.lastActivity;
+                if (inactive > 30 * 60 * 1000 && isLoggedIn) { // 30 minutes
+                    showToast('info', 'Session Notice', 'You\'ve been inactive for a while. Your session is still active.');
+                    this.updateActivity();
+                }
+            }
+        };
+
+        // Track user activity
+        ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart', 'click'].forEach(event => {
+            document.addEventListener(event, () => AppState.updateActivity(), true);
+        });
+
+        // Check activity every 5 minutes
+        setInterval(() => AppState.checkActivity(), 5 * 60 * 1000);
+
+        // Final initialization
+        AppState.isInitialized = true;
+        console.log('🎉 B4N1 SHOP fully loaded and ready for barnigonz.github.io/WebShop/!');
+    </script>
+</body>
+</html>
